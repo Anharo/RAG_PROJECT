@@ -3,6 +3,8 @@ uvicorn
 python-dotenv
 pypdf
 python-multipart
-chromadb sentence-transformers
+chromadb 
+sentence-transformers
 langgraph
-streamlit requests
+streamlit 
+requests
