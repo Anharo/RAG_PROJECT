@@ -89,7 +89,7 @@ rag-customer-support/
 ### 1. Clone the repo
 
 ```bash
-git clone https://github.com/yourusername/rag-customer-support.git
+git clone https://github.com/Anharo/rag-customer-support.git
 cd rag-customer-support
 ```
 
