@@ -15,7 +15,10 @@ def build_graph():
     # Flow
     graph.set_entry_point("intent")
 
-    graph.add_edge("intent", "retrieve")
+    graph.add_conditional_edges(
+    "intent",
+    lambda state: "hitl" if state["intent"] == "ESCALATE" else "retrieve"
+)
     graph.add_edge("retrieve", "generate")
 
     # Conditional routing

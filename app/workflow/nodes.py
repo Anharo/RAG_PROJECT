@@ -1,6 +1,6 @@
 from app.retrieval.retriever import retrieve_chunks
 from app.llm.generator import generate_answer
-
+from app.hitl.escalation import add_to_queue
 
 # 🔹 Intent detection (simple for now)
 def detect_intent(state):
@@ -22,8 +22,22 @@ def retrieve_node(state):
 def generate_node(state):
     answer = generate_answer(state["query"], state["chunks"])
 
-    # simple confidence logic
-    escalate = "couldn't find" in answer.lower()
+    chunks = state["chunks"]
+
+    # 🔥 Better logic
+    avg_distance = (
+        sum([c["score"] for c in chunks]) / len(chunks)
+        if chunks else 999
+    )
+
+    escalate = (
+        not chunks or
+        avg_distance > 1.25 or   # 🔥 key fix
+        len(answer.strip()) < 25
+    )
+
+    print("DEBUG → avg_distance:", avg_distance)
+    print("DEBUG → escalate:", escalate)
 
     return {
         **state,
@@ -31,10 +45,12 @@ def generate_node(state):
         "escalate": escalate
     }
 
-
 # 🔹 HITL node
 def hitl_node(state):
+    ticket = add_to_queue(state["query"])
+
     return {
         **state,
-        "answer": "Your query has been escalated to a human agent."
+        "answer": f"Your query has been escalated to a human agent. Ticket ID: {ticket['id']}",
+        "escalate": True
     }
